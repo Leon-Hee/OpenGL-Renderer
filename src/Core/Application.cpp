@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include "Window.h"
 #include "../Renderer/Renderer.h"
+#include "../Renderer/Resources/VertexBuffer.h"
 
 Application::Application()
 {
@@ -29,7 +30,7 @@ void Application::Run()
 
     Renderer renderer;
     renderer.Init();
-    
+
     std::cout << "OpenGL Version: "
           << glGetString(GL_VERSION)
           << std::endl;
@@ -41,6 +42,15 @@ void Application::Run()
     std::cout << "Renderer: "
             << glGetString(GL_RENDERER)
             << std::endl;
+
+    float vertices[] = {
+        -0.5f, -0.5f,
+        0.5f, -0.5f,
+        0.0f,  0.5f
+    };
+
+    VertexBuffer vertexbuffer(vertices, sizeof(vertices));
+    
     
     while(!window.ShouldClose()) 
     {

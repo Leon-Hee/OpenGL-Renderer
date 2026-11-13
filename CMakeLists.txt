@@ -14,6 +14,7 @@ add_executable(
     src/Core/Application.cpp
     src/Core/Window.cpp
     src/Renderer/Renderer.cpp
+    src/Renderer/Resources/VertexBuffer.cpp
 )
 
 target_link_libraries(LeonsRenderer PRIVATE 
