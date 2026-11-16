@@ -97,8 +97,10 @@ void Application::Run()
         renderer.BeginFrame();
         renderer.Clear();
         shader.Bind();
+        shader.SetFloat("time", 0.5f);
         vertexarray.Bind();
         glDrawArrays(GL_TRIANGLES, 0, 3);
+        shader.Unbind();
 
         editor.Draw();
         editor.EndFrame();

@@ -37,9 +37,11 @@ add_executable(
 target_include_directories(LeonsRenderer PRIVATE
     third_party/imgui
     third_party/imgui/backends
+    /opt/homebrew/opt/glm/include
 )
 
 target_link_libraries(LeonsRenderer PRIVATE 
     glfw
     ${OPENGL_FRAMEWORK}
 )
+

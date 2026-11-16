@@ -5,6 +5,7 @@
 
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
+    // 读取文件
     std::ifstream vertexFile(vertexPath);
     std::stringstream vertexStream;
     vertexStream << vertexFile.rdbuf();
@@ -17,6 +18,7 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
     std::string fragmentSource = fragmentStream.str();
     const char* fragmentSourceCode = fragmentSource.c_str();
 
+    // 建立着色器并附加编译检测
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexSourceCode, nullptr);
     glCompileShader(vertexShader);
@@ -42,6 +44,7 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
         std::cout << "Fragment Shader Compilation Error:\n" << infoLog << std::endl;
     }
 
+    // 建立程序
     m_RendererID = glCreateProgram();
     glAttachShader(m_RendererID, vertexShader);
     glAttachShader(m_RendererID, fragmentShader);
@@ -75,4 +78,60 @@ void Shader::Bind()
 void Shader::Unbind()
 {
     glUseProgram(0);
+}
+
+
+void Shader::SetFloat(const std::string& name, float value){
+    const char* _name = name.c_str();
+    GLint FloatLocation = glGetUniformLocation(m_RendererID, _name);
+    glUniform1f(FloatLocation, value);
+
+    
+}
+
+void Shader::SetBool(const std::string& name, bool value) {
+    const char* _name = name.c_str();
+    GLint BoolLocation = glGetUniformLocation(m_RendererID, _name);
+    glUniform1i(BoolLocation, value);
+}
+
+void Shader::SetVec3(const std::string& name, glm::vec3 value) {
+    const char* _name = name.c_str();
+    GLint Vec3Location = glGetUniformLocation(m_RendererID, _name);
+    glUniform3fv(Vec3Location, 1, glm::value_ptr(value));
+}
+
+void Shader::SetInt(const std::string& name, int value)
+{
+    const char* _name = name.c_str();
+    GLint IntLocation = glGetUniformLocation(m_RendererID, _name);
+    glUniform1i(IntLocation, value);
+}
+
+void Shader::SetVec2(const std::string& name, glm::vec2 value)
+{
+    const char* _name = name.c_str();
+    GLint Vec2Location = glGetUniformLocation(m_RendererID, _name);
+    glUniform2fv(Vec2Location, 1, glm::value_ptr(value));
+}
+
+void Shader::SetVec4(const std::string& name, glm::vec4 value)
+{
+    const char* _name = name.c_str();
+    GLint Vec4Location = glGetUniformLocation(m_RendererID, _name);
+    glUniform4fv(Vec4Location, 1, glm::value_ptr(value));
+}
+
+void Shader::SetMat3(const std::string& name, glm::mat3 value)
+{
+    const char* _name = name.c_str();
+    GLint Mat3Location = glGetUniformLocation(m_RendererID, _name);
+    glUniformMatrix3fv(Mat3Location, 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void Shader::SetMat4(const std::string& name, glm::mat4 value)
+{
+    const char* _name = name.c_str();
+    GLint Mat4Location = glGetUniformLocation(m_RendererID, _name);
+    glUniformMatrix4fv(Mat4Location, 1, GL_FALSE, glm::value_ptr(value));
 }
