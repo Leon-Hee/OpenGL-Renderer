@@ -8,6 +8,9 @@
 #include "../Editor/Editor.h"
 #include "../Scene/Scene.h"
 #include "../Renderer/Resources/Shader.h"
+#include "../Renderer/Resources/Texture.h"
+#include "../Renderer/Resources/Material.h"
+#include "../Renderer/Resources/Mesh.h"
 
 Application::Application()
 {
@@ -52,31 +55,19 @@ void Application::Run()
 
 
     Shader shader("../assets/shaders/basic.vert", "../assets/shaders/basic.frag");
+    Texture texture("../assets/textures/test.jpeg");
+    Material material(shader, texture);
+
 
 
     float vertices[] = {
-        -0.5f, -0.5f,
-        0.5f, -0.5f,
-        0.0f,  0.5f
+    -0.5, -0.5, 0.0, 0.0,
+    0.5, -0.5, 1.0, 0.0,
+    0.0,  0.5, 0.5, 1.0
     };
 
-    VertexArray vertexarray;
-    VertexBuffer vertexbuffer(vertices, sizeof(vertices));
+    Mesh mesh(vertices, sizeof(vertices), 3, material);
 
-    vertexarray.Bind();
-    vertexbuffer.Bind();
-
-    glVertexAttribPointer(
-        0,
-        2,
-        GL_FLOAT,
-        GL_FALSE,
-        2 * sizeof(float),
-        nullptr
-    );
-
-    glEnableVertexAttribArray(0);
-    
     Scene scene;
 
     Entity& camera = scene.CreateEntity("相机");
@@ -96,11 +87,8 @@ void Application::Run()
 
         renderer.BeginFrame();
         renderer.Clear();
-        shader.Bind();
-        shader.SetFloat("time", 0.5f);
-        vertexarray.Bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        shader.Unbind();
+
+        mesh.Draw();
 
         editor.Draw();
         editor.EndFrame();

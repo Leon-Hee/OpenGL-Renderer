@@ -1,6 +1,9 @@
+#pragma once
 #include <GLFW/glfw3.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/gl3.h>
+#include "VertexBuffer.h"
+
 
 class VertexArray
 {
@@ -12,5 +15,8 @@ public:
 
     void Bind() const;
     void UnBind() const;
+
+    void AddVertexBuffer(const VertexBuffer& vertexBuffer);
+
 };
 

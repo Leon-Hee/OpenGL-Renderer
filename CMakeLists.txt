@@ -29,6 +29,10 @@ add_executable(
     src/Scene/Scene.cpp
     src/Scene/Entity.cpp
     src/Renderer/Resources/Shader.cpp
+    src/Renderer/Resources/Texture.cpp
+    src/Renderer/Resources/Material.cpp
+    src/Renderer/Resources/Mesh.cpp
+    src/Renderer/Resources/VertexBufferLayout.cpp
 
     
     
