@@ -1,4 +1,5 @@
 #include "VertexArray.h"
+#include "VertexBufferLayout.h"
 
 VertexArray::VertexArray()
 {
@@ -22,45 +23,30 @@ void VertexArray::UnBind() const
     glBindVertexArray(0);
 }
 
-void VertexArray::AddVertexBuffer(const VertexBuffer& vertexBuffer) 
+void VertexArray::AddVertexBuffer(const VertexBuffer& vertexBuffer, const VertexBufferLayout& vertexBufferLayout) 
 {
     Bind();
 
     vertexBuffer.Bind();
 
-    glEnableVertexAttribArray(0);
+    const std::vector<Element>& elements = vertexBufferLayout.GetElements();
 
-    glVertexAttribPointer(
+    unsigned int offset = 0;
+    unsigned int index = 0;
 
-        0,
-
-        2,
-
-        GL_FLOAT,
-
-        GL_FALSE,
-
-        4 * sizeof(float),
-
-        (void*)0
-
-    );
-
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(
-
-        1,
-
-        2,
-
-        GL_FLOAT,
-
-        GL_FALSE,
-
-        4 * sizeof(float),
-
-        (void*)(2 * sizeof(float))
-
-    );
+    for(const auto& element : elements)
+    {
+        glVertexAttribPointer(
+            index,
+            element.count,
+            element.type,
+            element.normalized,
+            vertexBufferLayout.GetStride(),
+            (void*) (offset)
+        );
+        glEnableVertexAttribArray(index);
+        index++;
+        offset += element.size;
+    }
+    
 }

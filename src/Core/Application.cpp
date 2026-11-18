@@ -12,6 +12,7 @@
 #include "../Renderer/Resources/Material.h"
 #include "../Renderer/Resources/Mesh.h"
 
+
 Application::Application()
 {
     if(!glfwInit()) {
@@ -66,7 +67,10 @@ void Application::Run()
     0.0,  0.5, 0.5, 1.0
     };
 
-    Mesh mesh(vertices, sizeof(vertices), 3, material);
+    VertexBufferLayout vertexBufferLayout;
+    vertexBufferLayout.PushFloat(2);
+    vertexBufferLayout.PushFloat(2);
+    Mesh mesh(vertices, sizeof(vertices), 3, material, vertexBufferLayout);
 
     Scene scene;
 

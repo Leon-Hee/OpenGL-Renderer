@@ -3,6 +3,8 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/gl3.h>
 #include "VertexBuffer.h"
+#include "VertexBufferLayout.h"
+#include <vector>
 
 
 class VertexArray
@@ -16,7 +18,7 @@ public:
     void Bind() const;
     void UnBind() const;
 
-    void AddVertexBuffer(const VertexBuffer& vertexBuffer);
+    void AddVertexBuffer(const VertexBuffer& vertexBuffer, const VertexBufferLayout& vertexBufferLayout);
 
 };
 
