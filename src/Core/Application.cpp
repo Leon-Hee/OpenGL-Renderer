@@ -1,6 +1,9 @@
 #include "Application.h"
 #include <iostream>
 #include <GLFW/glfw3.h>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
+
 #include "Window.h"
 #include "../Renderer/Renderer.h"
 #include "../Renderer/Resources/VertexBuffer.h"
@@ -11,6 +14,7 @@
 #include "../Renderer/Resources/Texture.h"
 #include "../Renderer/Resources/Material.h"
 #include "../Renderer/Resources/Mesh.h"
+#include "../Renderer/Camera.h"
 
 
 Application::Application()
@@ -54,11 +58,12 @@ void Application::Run()
             << glGetString(GL_RENDERER)
             << std::endl;
 
-
+    Camera camera(1280.0f, 720.0f, 45.0f, 0.1f, 100.0f);
     Shader shader("../assets/shaders/basic.vert", "../assets/shaders/basic.frag");
     Texture texture("../assets/textures/test.jpeg");
+    
     Material material(shader, texture);
-
+    
 
 
     float vertices[] = {
@@ -72,15 +77,7 @@ void Application::Run()
     vertexBufferLayout.PushFloat(2);
     Mesh mesh(vertices, sizeof(vertices), 3, material, vertexBufferLayout);
 
-    Scene scene;
 
-    Entity& camera = scene.CreateEntity("相机");
-    Entity& cube = scene.CreateEntity("立方体");
-    Entity& light = scene.CreateEntity("光源");
-
-    std::cout << camera.GetID() << " " << camera.GetName() << std::endl;
-    std::cout << cube.GetID() << " " << cube.GetName() << std::endl;
-    std::cout << light.GetID() << " " << light.GetName() << std::endl;
 
     
     while(!window.ShouldClose()) 

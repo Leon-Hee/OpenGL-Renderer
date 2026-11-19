@@ -4,13 +4,13 @@ Material::Material(Shader& shader, Texture& texture)
 {
     m_Shader = &shader;
     m_Texture = &texture;
+
 }
 
 void Material::Bind() const // 把这个 Material 所需要的渲染资源全部绑定到 OpenGL 当前状态。
 {
     m_Shader -> Bind();
-    m_Shader -> SetInt("u_Texture", 0);
-    m_Shader -> SetFloat("u_Value", 0.4);
+
     m_Texture -> Bind_2D(0);
 }
 
@@ -47,4 +47,9 @@ void Material::SetMat3(const std::string& name, glm::mat3 value)
 void Material::SetMat4(const std::string& name, glm::mat4 value)
 {
     m_Shader->SetMat4(name, value);
+}
+
+void Material::SetTexture2D(int value)
+{
+    m_Texture->Bind_2D(value);
 }

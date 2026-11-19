@@ -33,6 +33,7 @@ add_executable(
     src/Renderer/Resources/Material.cpp
     src/Renderer/Resources/Mesh.cpp
     src/Renderer/Resources/VertexBufferLayout.cpp
+    src/Renderer/Camera.cpp
 
     
     
