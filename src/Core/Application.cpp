@@ -15,6 +15,7 @@
 #include "../Renderer/Resources/Material.h"
 #include "../Renderer/Resources/Mesh.h"
 #include "../Renderer/Camera.h"
+#include "../Renderer/Transform.h"
 
 
 Application::Application()
@@ -41,55 +42,183 @@ void Application::Run()
     Window window;
 
     Renderer renderer;
+
     renderer.Init();
 
-    Editor editor; // Editor 是“运行在 OpenGL 窗口里的 UI”，所以它必须依赖 Window 已经建立好的 OpenGL Context。
+    Editor editor;
+
     editor.Init(window.GetNativeWindow());
 
     std::cout << "OpenGL Version: "
-          << glGetString(GL_VERSION)
-          << std::endl;
+
+              << glGetString(GL_VERSION)
+
+              << std::endl;
 
     std::cout << "GLSL Version: "
-            << glGetString(GL_SHADING_LANGUAGE_VERSION)
-            << std::endl;
+
+              << glGetString(GL_SHADING_LANGUAGE_VERSION)
+
+              << std::endl;
 
     std::cout << "Renderer: "
-            << glGetString(GL_RENDERER)
-            << std::endl;
 
-    Camera camera(1280.0f, 720.0f, 45.0f, 0.1f, 100.0f);
-    Shader shader("../assets/shaders/basic.vert", "../assets/shaders/basic.frag");
-    Texture texture("../assets/textures/test.jpeg");
-    
-    Material material(shader, texture);
-    
+              << glGetString(GL_RENDERER)
 
+              << std::endl;
+
+    Camera camera(
+
+        1280.0f,
+
+        720.0f,
+
+        45.0f,
+
+        0.1f,
+
+        100.0f
+
+    );
+
+    Shader shader(
+
+        "../assets/shaders/basic.vert",
+
+        "../assets/shaders/basic.frag"
+
+    );
+
+    Texture texture(
+
+        "../assets/textures/test.jpeg"
+
+    );
+
+    Material material(
+
+        shader,
+
+        texture
+
+    );
+
+
+
+    Transform transform(
+
+        glm::vec3(0.0f, 0.0f, 0.0f),
+
+        glm::vec3(0.0f, 0.0f, 0.0f),
+
+        glm::vec3(1.0f, 1.0f, 1.0f)
+
+    );
+
+    Transform transform2(
+
+        glm::vec3(0.0f, 0.0f, -1.0f),
+
+        glm::vec3(0.0f, 0.0f, 0.0f),
+
+        glm::vec3(1.0f, 1.0f, 1.0f)
+
+    );
 
     float vertices[] = {
-    -0.5, -0.5, 0.0, 0.0,
-    0.5, -0.5, 1.0, 0.0,
-    0.0,  0.5, 0.5, 1.0
+
+        -0.5f, -0.5f, 0.0f, 0.0f,
+
+         0.5f, -0.5f, 1.0f, 0.0f,
+
+        -0.5f,  0.5f, 0.0f, 1.0f,
+
+         0.5f,  0.5f, 1.0f, 1.0f
+
+    };
+
+    unsigned int indices[] = {
+
+        0, 1, 2,
+
+        1, 3, 2
+
     };
 
     VertexBufferLayout vertexBufferLayout;
+
     vertexBufferLayout.PushFloat(2);
+
     vertexBufferLayout.PushFloat(2);
-    Mesh mesh(vertices, sizeof(vertices), 3, material, vertexBufferLayout);
 
+    Mesh mesh(
 
+        vertices,
 
-    
+        sizeof(vertices),
+
+        material,
+
+        vertexBufferLayout,
+
+        indices,
+
+        sizeof(indices)
+
+    );
+
+    int framebufferwidth = 0;
+
+    int framebufferheight = 0;
+
+    renderer.SetClearColor(
+
+        1.0f,
+
+        1.0f,
+
+        1.0f,
+
+        1.0f
+
+    );
     while(!window.ShouldClose()) 
     {
         window.PollEvents();
+
+        window.GetFrameBufferSize(framebufferwidth, framebufferheight);
+        renderer.SetViewPort(0, 0, framebufferwidth, framebufferheight);
 
         editor.BeginFrame(); 
 
         renderer.BeginFrame();
         renderer.Clear();
 
-        mesh.Draw();
+        renderer.SetWireFrame(false);
+
+        
+        material.SetVec4("u_Color", glm::vec4(0.0f, 0.0f, 1.0f, 0.5f));
+        material.SetRenderType(RenderType::Transparent);
+        renderer.Draw(
+
+            mesh,
+
+            transform2,
+
+            camera
+
+        );
+        material.SetVec4("u_Color", glm::vec4(1.0f, 0.0f, 0.0f, 0.5f));
+        material.SetRenderType(RenderType::Opaque);
+        renderer.Draw(
+
+            mesh,
+
+            transform,
+
+            camera
+
+        );
 
         editor.Draw();
         editor.EndFrame();

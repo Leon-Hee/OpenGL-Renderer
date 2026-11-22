@@ -89,13 +89,17 @@ void Shader::SetFloat(const std::string& name, float value){
     
 }
 
-void Shader::SetBool(const std::string& name, bool value) {
+void Shader::SetBool(const std::string& name, bool value) 
+{
+    glUseProgram(m_RendererID);
     const char* _name = name.c_str();
     GLint BoolLocation = glGetUniformLocation(m_RendererID, _name);
     glUniform1i(BoolLocation, value);
 }
 
-void Shader::SetVec3(const std::string& name, glm::vec3 value) {
+void Shader::SetVec3(const std::string& name, glm::vec3 value) 
+{
+    glUseProgram(m_RendererID);
     const char* _name = name.c_str();
     GLint Vec3Location = glGetUniformLocation(m_RendererID, _name);
     glUniform3fv(Vec3Location, 1, glm::value_ptr(value));
@@ -103,6 +107,7 @@ void Shader::SetVec3(const std::string& name, glm::vec3 value) {
 
 void Shader::SetInt(const std::string& name, int value)
 {
+    glUseProgram(m_RendererID);
     const char* _name = name.c_str();
     GLint IntLocation = glGetUniformLocation(m_RendererID, _name);
     glUniform1i(IntLocation, value);
@@ -110,6 +115,7 @@ void Shader::SetInt(const std::string& name, int value)
 
 void Shader::SetVec2(const std::string& name, glm::vec2 value)
 {
+    glUseProgram(m_RendererID);
     const char* _name = name.c_str();
     GLint Vec2Location = glGetUniformLocation(m_RendererID, _name);
     glUniform2fv(Vec2Location, 1, glm::value_ptr(value));
@@ -117,6 +123,7 @@ void Shader::SetVec2(const std::string& name, glm::vec2 value)
 
 void Shader::SetVec4(const std::string& name, glm::vec4 value)
 {
+    glUseProgram(m_RendererID);
     const char* _name = name.c_str();
     GLint Vec4Location = glGetUniformLocation(m_RendererID, _name);
     glUniform4fv(Vec4Location, 1, glm::value_ptr(value));
@@ -124,6 +131,7 @@ void Shader::SetVec4(const std::string& name, glm::vec4 value)
 
 void Shader::SetMat3(const std::string& name, glm::mat3 value)
 {
+    glUseProgram(m_RendererID);
     const char* _name = name.c_str();
     GLint Mat3Location = glGetUniformLocation(m_RendererID, _name);
     glUniformMatrix3fv(Mat3Location, 1, GL_FALSE, glm::value_ptr(value));
@@ -131,6 +139,7 @@ void Shader::SetMat3(const std::string& name, glm::mat3 value)
 
 void Shader::SetMat4(const std::string& name, glm::mat4 value)
 {
+    glUseProgram(m_RendererID);
     const char* _name = name.c_str();
     GLint Mat4Location = glGetUniformLocation(m_RendererID, _name);
     glUniformMatrix4fv(Mat4Location, 1, GL_FALSE, glm::value_ptr(value));

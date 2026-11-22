@@ -39,3 +39,8 @@ bool Window::ShouldClose()
 {
     return glfwWindowShouldClose(m_Window);
 }
+
+void Window::GetFrameBufferSize(int& width, int& height)
+{
+    glfwGetFramebufferSize(m_Window, &width, &height);
+}

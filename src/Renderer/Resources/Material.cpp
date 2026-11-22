@@ -4,7 +4,7 @@ Material::Material(Shader& shader, Texture& texture)
 {
     m_Shader = &shader;
     m_Texture = &texture;
-
+    m_RenderType = RenderType::Opaque;
 }
 
 void Material::Bind() const // 把这个 Material 所需要的渲染资源全部绑定到 OpenGL 当前状态。
@@ -52,4 +52,14 @@ void Material::SetMat4(const std::string& name, glm::mat4 value)
 void Material::SetTexture2D(int value)
 {
     m_Texture->Bind_2D(value);
+}
+
+void Material::SetRenderType(RenderType renderType)
+{
+    m_RenderType = renderType;
+}
+
+RenderType Material::GetRenderType() const
+{
+    return m_RenderType;
 }

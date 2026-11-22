@@ -3,15 +3,16 @@
 Mesh::Mesh(
     const void* vertices,
     unsigned int size,
-    unsigned int vertexCount,
     Material& material,
-    const VertexBufferLayout& vertexBufferLayout
+    const VertexBufferLayout& vertexBufferLayout,
+    const unsigned int* indices,
+    unsigned int indexCount
 )
     : m_Material(material),
       m_VertexArray(),
       m_VertexBuffer(vertices, size),
-      m_VertexCount(vertexCount),
-      m_vertexBufferLayout(vertexBufferLayout)
+      m_vertexBufferLayout(vertexBufferLayout),
+      m_IndexBuffer(indices, indexCount)
 {
     m_VertexArray.AddVertexBuffer(m_VertexBuffer, m_vertexBufferLayout);
 }
@@ -22,8 +23,13 @@ Mesh::~Mesh()
 
 void Mesh::Draw()
 {
-    m_Material.Bind();
     m_VertexArray.Bind();
+    m_IndexBuffer.Bind();
 
-    glDrawArrays(GL_TRIANGLES, 0, m_VertexCount);
+    glDrawElements(GL_TRIANGLES, m_IndexBuffer.GetCount(), GL_UNSIGNED_INT, nullptr);
+}
+
+Material& Mesh::GetMaterial()
+{
+    return m_Material;
 }

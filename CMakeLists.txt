@@ -34,6 +34,9 @@ add_executable(
     src/Renderer/Resources/Mesh.cpp
     src/Renderer/Resources/VertexBufferLayout.cpp
     src/Renderer/Camera.cpp
+    src/Renderer/Transform.cpp
+    src/Renderer/Resources/IndexBuffer.cpp
+    src/Renderer/RenderType.h
 
     
     
