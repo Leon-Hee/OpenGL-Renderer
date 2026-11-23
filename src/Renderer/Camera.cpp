@@ -5,7 +5,8 @@ Camera::Camera(float width, float height, float FOV, float Znear, float Zfar)
       m_FOV(FOV),
       m_Height(height),
       m_Znear(Znear),
-      m_Zfar(Zfar)
+      m_Zfar(Zfar),
+      m_Position(0.0f, 0.0f, 3.0f)
 
 {
     m_View = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -23,4 +24,9 @@ const glm::mat4& Camera::GetViewMatrix() const
 const glm::mat4& Camera::GetProjectionMatrix() const
 {
     return m_Projection;
+}
+
+const glm::vec3& Camera::GetPosition() const
+{
+    return m_Position;
 }

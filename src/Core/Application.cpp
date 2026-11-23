@@ -16,7 +16,7 @@
 #include "../Renderer/Resources/Mesh.h"
 #include "../Renderer/Camera.h"
 #include "../Renderer/Transform.h"
-
+#include "../Renderer/RenderQueue.h"
 
 Application::Application()
 {
@@ -27,9 +27,6 @@ Application::Application()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-
-    
 }
 
 Application::~Application()
@@ -50,79 +47,52 @@ void Application::Run()
     editor.Init(window.GetNativeWindow());
 
     std::cout << "OpenGL Version: "
-
               << glGetString(GL_VERSION)
-
               << std::endl;
 
     std::cout << "GLSL Version: "
-
               << glGetString(GL_SHADING_LANGUAGE_VERSION)
-
               << std::endl;
 
     std::cout << "Renderer: "
-
               << glGetString(GL_RENDERER)
-
               << std::endl;
 
     Camera camera(
-
         1280.0f,
-
         720.0f,
-
         45.0f,
-
         0.1f,
-
         100.0f
-
     );
 
     Shader shader(
-
         "../assets/shaders/basic.vert",
-
         "../assets/shaders/basic.frag"
-
     );
 
     Texture texture(
-
-        "../assets/textures/test.jpeg"
-
+        "../assets/textures/window.png"
     );
 
     Material material(
-
         shader,
-
         texture
-
     );
 
-
+    // 设置为透明物体，进入 Transparent Queue
+    material.SetRenderType(RenderType::Opaque);
 
     Transform transform(
-
         glm::vec3(0.0f, 0.0f, 0.0f),
-
         glm::vec3(0.0f, 0.0f, 0.0f),
-
         glm::vec3(1.0f, 1.0f, 1.0f)
-
     );
 
     Transform transform2(
-
         glm::vec3(0.0f, 0.0f, -1.0f),
-
         glm::vec3(0.0f, 0.0f, 0.0f),
-
         glm::vec3(1.0f, 1.0f, 1.0f)
-
     );
 
     float vertices[] = {
@@ -148,84 +118,79 @@ void Application::Run()
     VertexBufferLayout vertexBufferLayout;
 
     vertexBufferLayout.PushFloat(2);
-
     vertexBufferLayout.PushFloat(2);
 
     Mesh mesh(
-
         vertices,
-
         sizeof(vertices),
-
         material,
-
         vertexBufferLayout,
-
         indices,
-
         sizeof(indices)
-
     );
 
     int framebufferwidth = 0;
-
     int framebufferheight = 0;
 
     renderer.SetClearColor(
-
         1.0f,
-
         1.0f,
-
         1.0f,
-
         1.0f
-
     );
+
+    // ----------------------------------------
+    // RenderQueue 测试
+    // ----------------------------------------
+
+    
+    
+
+    // ----------------------------------------
+    // Main Loop
+    // ----------------------------------------
+    RenderQueue queue;
+
+
     while(!window.ShouldClose()) 
     {
         window.PollEvents();
+        
+        queue.Clear();
 
-        window.GetFrameBufferSize(framebufferwidth, framebufferheight);
-        renderer.SetViewPort(0, 0, framebufferwidth, framebufferheight);
+        queue.Submit(mesh, transform2);
+        queue.Submit(mesh, transform);
+
+
+
+        window.GetFrameBufferSize(
+            framebufferwidth,
+            framebufferheight
+        );
+
+        renderer.SetViewPort(
+            0,
+            0,
+            framebufferwidth,
+            framebufferheight
+        );
 
         editor.BeginFrame(); 
 
         renderer.BeginFrame();
-        renderer.Clear();
 
         renderer.SetWireFrame(false);
 
-        
-        material.SetVec4("u_Color", glm::vec4(0.0f, 0.0f, 1.0f, 0.5f));
-        material.SetRenderType(RenderType::Transparent);
-        renderer.Draw(
-
-            mesh,
-
-            transform2,
-
-            camera
-
-        );
-        material.SetVec4("u_Color", glm::vec4(1.0f, 0.0f, 0.0f, 0.5f));
-        material.SetRenderType(RenderType::Opaque);
-        renderer.Draw(
-
-            mesh,
-
-            transform,
-
-            camera
-
-        );
+        renderer.Execute(queue, camera);
 
         editor.Draw();
+
         editor.EndFrame();
 
         renderer.EndFrame();
+
         window.SwapBuffers();
     }
-    editor.Shutdown();
 
+    editor.Shutdown();
 }

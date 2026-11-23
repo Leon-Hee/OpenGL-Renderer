@@ -20,6 +20,7 @@ public:
     ~Camera();
     const glm::mat4& GetViewMatrix() const;
     const glm::mat4& GetProjectionMatrix() const;
+    const glm::vec3& GetPosition() const;
 };
 
 

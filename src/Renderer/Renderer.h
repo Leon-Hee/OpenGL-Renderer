@@ -3,6 +3,8 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "RenderType.h"
+#include "RenderQueue.h"
+#include <vector>
 
 class Renderer
 {
@@ -13,7 +15,7 @@ public:
     void BeginFrame(); // 帧开始
     void Clear(); // 清空缓冲区
     void EndFrame(); // 帧结束
-    void Draw(Mesh& mesh, Transform& transform, Camera& camera); // 画
+    void Draw(const RenderItem& renderItem, Camera& camera); // 画
     void SetClearColor(float r, float g, float b, float a);
     void SetViewPort(int x, int y, int width, int height);
     void SetWireFrame(bool enabled);
@@ -22,6 +24,11 @@ public:
     void SetBlendFunc();
     void SetDepthWrite(bool enabled);
     void SetRenderType(RenderType type);
+    void Execute(RenderQueue& queue, Camera& camera);
+    void SetDepthTestFunc(unsigned int function);
+    void SetFaceCulling(bool enabled);
+    void SetFrontFace(unsigned int mode);
+    void SetCullFace(unsigned int mode);
 };
 
 

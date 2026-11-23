@@ -3,7 +3,7 @@
 
 void Renderer::BeginFrame() 
 {
-
+    Clear();
 }
 
 void Renderer::Clear()
@@ -18,22 +18,22 @@ void Renderer::EndFrame()
 
 void Renderer::Init()
 {
-    glDepthFunc(GL_LESS);
+    SetDepthTestFunc(GL_LESS);
     glEnable(GL_DEPTH_TEST); // 开启深度检测
-    glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CCW);
+    SetFaceCulling(true);
+    SetFrontFace(GL_CCW);
     glCullFace(GL_BACK);
 }
 
-void Renderer::Draw(Mesh& mesh, Transform& transform, Camera& camera)
+void Renderer::Draw(const RenderItem& renderItem, Camera& camera)
 {
-    Material& material = mesh.GetMaterial();
+    Material& material = renderItem.m_Mesh->GetMaterial();
     material.Bind();
     SetRenderType(material.GetRenderType());
-    material.SetMat4("u_Model", transform.GetMatrix());
+    material.SetMat4("u_Model", renderItem.m_Transform->GetMatrix());
     material.SetMat4("u_View", camera.GetViewMatrix());
     material.SetMat4("u_Projection", camera.GetProjectionMatrix());
-    mesh.Draw();
+    renderItem.m_Mesh->Draw();
 }
 
 void Renderer::SetClearColor(float r, float g, float b, float a)
@@ -117,4 +117,46 @@ void Renderer::SetRenderType(RenderType type)
         SetBlend(true);
         SetBlendFunc();
     }
+}
+
+void Renderer::Execute(RenderQueue& queue, Camera& camera) 
+{
+    const std::vector<RenderItem>& renderOpaqueItems = queue.GetOpaqueItems();
+    
+    for(const auto& item : renderOpaqueItems) {
+        Draw(item, camera);
+    }
+    queue.SortTransparent(camera);
+    const std::vector<RenderItem>& renderTransparentItems = queue.GetTransparentItems();
+    
+    for(const auto& item : renderTransparentItems) {
+        Draw(item, camera);
+    }
+}
+
+void Renderer::SetDepthTestFunc(unsigned int function)
+{
+    glDepthFunc(function);
+}
+
+void Renderer::SetFaceCulling(bool enabled)
+{
+    if(enabled)
+    {
+        glEnable(GL_CULL_FACE);
+    }
+    else
+    {
+        glDisable(GL_CULL_FACE);
+    }
+}
+
+void Renderer::SetFrontFace(unsigned int mode)
+{
+    glFrontFace(mode);
+}
+
+void Renderer::SetCullFace(unsigned int mode)
+{
+    glCullFace(mode);
 }

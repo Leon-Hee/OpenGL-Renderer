@@ -37,6 +37,8 @@ add_executable(
     src/Renderer/Transform.cpp
     src/Renderer/Resources/IndexBuffer.cpp
     src/Renderer/RenderType.h
+    src/Renderer/RenderQueue.h
+    src/Renderer/RenderQueue.cpp
 
     
     
