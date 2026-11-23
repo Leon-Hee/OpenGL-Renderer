@@ -9,10 +9,10 @@ Mesh::Mesh(
     unsigned int indexCount
 )
     : m_Material(material),
-      m_VertexArray(),
-      m_VertexBuffer(vertices, size),
-      m_vertexBufferLayout(vertexBufferLayout),
-      m_IndexBuffer(indices, indexCount)
+    m_VertexArray(),
+    m_VertexBuffer(vertices, size),
+    m_vertexBufferLayout(vertexBufferLayout),
+    m_IndexBuffer(indices, indexCount)
 {
     m_VertexArray.AddVertexBuffer(m_VertexBuffer, m_vertexBufferLayout);
 }

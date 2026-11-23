@@ -71,13 +71,17 @@ void Application::Run()
         "../assets/shaders/basic.frag"
     );
 
-    Texture texture(
-        "../assets/textures/window.png"
+    Texture diffuseTexture(
+        "../assets/textures/WallDiffuse.png"
+    );
+    Texture normalTexture(
+        "../assets/textures/WallNormal.png"
     );
 
     Material material(
         shader,
-        texture
+        diffuseTexture,
+        normalTexture
     );
 
     // 设置为透明物体，进入 Transparent Queue
@@ -97,14 +101,11 @@ void Application::Run()
 
     float vertices[] = {
 
-        -0.5f, -0.5f, 0.0f, 0.0f,
-
-         0.5f, -0.5f, 1.0f, 0.0f,
-
-        -0.5f,  0.5f, 0.0f, 1.0f,
-
-         0.5f,  0.5f, 1.0f, 1.0f
-
+        // Position          UV          Normal          Tangent
+        -0.5f, -0.5f,        0.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f,        1.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,        0.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
+        0.5f,  0.5f,        1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f
     };
 
     unsigned int indices[] = {
@@ -119,6 +120,8 @@ void Application::Run()
 
     vertexBufferLayout.PushFloat(2);
     vertexBufferLayout.PushFloat(2);
+    vertexBufferLayout.PushFloat(3);
+    vertexBufferLayout.PushFloat(3);
 
     Mesh mesh(
         vertices,
@@ -133,9 +136,9 @@ void Application::Run()
     int framebufferheight = 0;
 
     renderer.SetClearColor(
-        1.0f,
-        1.0f,
-        1.0f,
+        0.0f,
+        0.0f,
+        0.0f,
         1.0f
     );
 

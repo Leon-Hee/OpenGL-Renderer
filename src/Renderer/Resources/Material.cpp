@@ -1,9 +1,10 @@
 #include "Material.h"
 
-Material::Material(Shader& shader, Texture& texture)
+Material::Material(Shader& shader, Texture& diffuseTexture, Texture& NormalTexture)
 {
     m_Shader = &shader;
-    m_Texture = &texture;
+    m_DiffuseTexture = &diffuseTexture;
+    m_NormalTexture = &NormalTexture;
     m_RenderType = RenderType::Opaque;
 }
 
@@ -11,7 +12,11 @@ void Material::Bind() const // 把这个 Material 所需要的渲染资源全部
 {
     m_Shader -> Bind();
 
-    m_Texture -> Bind_2D(0);
+    m_DiffuseTexture -> Bind_2D(0);
+    m_NormalTexture -> Bind_2D(1);
+
+    m_Shader -> SetInt("u_DiffuseTexture", 0);
+    m_Shader -> SetInt("u_NormalTexture", 1);
 }
 
 void Material::SetFloat(const std::string& name, float value)
@@ -49,9 +54,14 @@ void Material::SetMat4(const std::string& name, glm::mat4 value)
     m_Shader->SetMat4(name, value);
 }
 
-void Material::SetTexture2D(int value)
+void Material::SetDiffuseTexture2D(int value)
 {
-    m_Texture->Bind_2D(value);
+    m_DiffuseTexture -> Bind_2D(value);
+}
+
+void Material::SetNormalTexture2D(int value)
+{
+    m_NormalTexture -> Bind_2D(value);
 }
 
 void Material::SetRenderType(RenderType renderType)
@@ -62,4 +72,14 @@ void Material::SetRenderType(RenderType renderType)
 RenderType Material::GetRenderType() const
 {
     return m_RenderType;
+}
+
+void Material::SetDiffuseTexture(Texture& diffuseTexture)
+{
+    m_DiffuseTexture = &diffuseTexture;
+}
+
+void Material::SetNormalTexture(Texture& normalTexture)
+{
+    m_NormalTexture = &normalTexture;
 }
