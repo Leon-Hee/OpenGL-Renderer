@@ -12,7 +12,7 @@ uniform mat4 u_Model;
 out vec2 TexCoords;
 out vec3 Normal;
 out vec3 Tangent;
-out vec3 Position;
+out vec3 WorldPosition;
 
 void main()
 {
@@ -34,5 +34,6 @@ void main()
     TexCoords =
         a_TexCoords;
 
-    Position = vec3(a_Position, 1.0);
+    WorldPosition =
+        vec3(u_Model * vec4(a_Position, 0.0, 1.0));
 }

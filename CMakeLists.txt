@@ -39,7 +39,7 @@ add_executable(
     src/Renderer/RenderType.h
     src/Renderer/RenderQueue.h
     src/Renderer/RenderQueue.cpp
-
+    src/Renderer/Light.cpp
     
     
 )

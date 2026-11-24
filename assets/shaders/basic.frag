@@ -3,14 +3,23 @@
 in vec2 TexCoords;
 in vec3 Normal;
 in vec3 Tangent;
-in vec3 Position;
+in vec3 WorldPosition;
 
 out vec4 FragColor;
 
-uniform float u_Value;
+uniform vec3 u_LightDirection;
+uniform vec3 u_LightPosition;
+uniform int u_LightType;
+uniform float u_Intensity;
+uniform float u_LightConstant;
+uniform float u_LightLinear;
+uniform float u_LightQuadratic;
+uniform float u_LightInnerCutoff;
+uniform float u_LightOuterCutoff;
+uniform vec3 u_LightColor;
+
 uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_NormalTexture;
-uniform vec4 u_Color;
 
 void main()
 {
@@ -49,16 +58,107 @@ void main()
             TBN * tangentNormal
         );
 
-    // 当前还没有 Lighting
-    // worldNormal 暂时只完成 Normal Mapping 数据链
+    // 8. 根据 Light Type 计算光线方向
+    vec3 lightDirection;
+    float attenuation = 1.0;
+    float spotIntensity = 1.0;
 
-    vec3 lightDirection = normalize(vec3(-1.0, 2.0, 1.0));
+    if (u_LightType == 0)
+    {
+        // Directional Light
+        lightDirection =
+            normalize(u_LightDirection);
+    }
+    else if (u_LightType == 1)
+    {
+        // Point Light
+        lightDirection =
+            normalize(
+                u_LightPosition - WorldPosition
+            );
 
-    float diffuse = max(dot(Position, lightDirection), 0.0);
+        float distance =
+            length(
+                u_LightPosition - WorldPosition
+            );
 
-    vec3 color = texture(u_DiffuseTexture, TexCoords).rgb;
+        attenuation =
+            1.0 /
+            (
+                u_LightConstant +
+                u_LightLinear * distance +
+                u_LightQuadratic * distance * distance
+            );
+    }
+    else if (u_LightType == 2)
+    {
+        // Spot Light
+        lightDirection =
+            normalize(
+                u_LightPosition - WorldPosition
+            );
+
+        float distance =
+            length(
+                u_LightPosition - WorldPosition
+            );
+
+        attenuation =
+            1.0 /
+            (
+                u_LightConstant +
+                u_LightLinear * distance +
+                u_LightQuadratic * distance * distance
+            );
+
+        // Light → Fragment
+        vec3 lightToFragment =
+            -lightDirection;
+
+        // Spot Light 的角度
+        float theta =
+            dot(
+                lightToFragment,
+                normalize(u_LightDirection)
+            );
+
+        // Inner / Outer Cone 平滑过渡
+        float epsilon =
+            u_LightInnerCutoff -
+            u_LightOuterCutoff;
+
+        spotIntensity =
+            clamp(
+                (theta - u_LightOuterCutoff) / epsilon,
+                0.0,
+                1.0
+            );
+    }
+
+    // 9. Lambert Diffuse
+    float diffuse =
+        max(
+            dot(
+                worldNormal,
+                lightDirection
+            ),
+            0.0
+        );
+
+    // 10. Diffuse Texture
+    vec3 color =
+        texture(
+            u_DiffuseTexture,
+            TexCoords
+        ).rgb;
+
+    // 11. Lighting
     color *= diffuse;
+    color *= attenuation;
+    color *= spotIntensity;
+    color *= u_Intensity;
+    color *= u_LightColor;
 
-
-    FragColor = vec4(color, 1.0);
+    FragColor =
+        vec4(color, 1.0);
 }

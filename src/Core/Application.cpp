@@ -84,6 +84,8 @@ void Application::Run()
         normalTexture
     );
 
+    
+
     // 设置为透明物体，进入 Transparent Queue
     material.SetRenderType(RenderType::Opaque);
 
@@ -142,18 +144,21 @@ void Application::Run()
         1.0f
     );
 
-    // ----------------------------------------
-    // RenderQueue 测试
-    // ----------------------------------------
 
-    
-    
-
-    // ----------------------------------------
-    // Main Loop
-    // ----------------------------------------
     RenderQueue queue;
-
+    
+    Light light(
+        LightType::Spot, 
+        glm::vec3(0.2f, 0.2f, 1.0f), 
+        glm::vec3(0.0f, 0.0f, -1.0f), 
+        glm::vec3(1.0f), 
+        1.0f, 
+        1.0f, 
+        0.09f, 
+        0.032f,
+        glm::cos(glm::radians(12.5f)),
+        glm::cos(glm::radians(33.5f))
+    );
 
     while(!window.ShouldClose()) 
     {
@@ -184,7 +189,7 @@ void Application::Run()
 
         renderer.SetWireFrame(false);
 
-        renderer.Execute(queue, camera);
+        renderer.Execute(queue, camera, light);
 
         editor.Draw();
 
