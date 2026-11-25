@@ -44,3 +44,14 @@ void Window::GetFrameBufferSize(int& width, int& height)
 {
     glfwGetFramebufferSize(m_Window, &width, &height);
 }
+
+void Window::SetShouldClose(bool closed)
+{
+    if(closed) {
+        glfwSetWindowShouldClose(m_Window, GL_TRUE);
+    }
+    else 
+    {
+        glfwSetWindowShouldClose(m_Window, GL_FALSE);
+    }
+}

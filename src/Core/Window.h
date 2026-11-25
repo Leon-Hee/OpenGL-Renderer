@@ -14,6 +14,7 @@ public:
     GLFWwindow* GetNativeWindow();
     bool ShouldClose();
     void GetFrameBufferSize(int& width, int& height);
+    void SetShouldClose(bool closed);
 };
 
 

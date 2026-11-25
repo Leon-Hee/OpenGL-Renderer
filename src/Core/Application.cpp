@@ -1,22 +1,4 @@
 #include "Application.h"
-#include <iostream>
-#include <GLFW/glfw3.h>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/string_cast.hpp>
-
-#include "Window.h"
-#include "../Renderer/Renderer.h"
-#include "../Renderer/Resources/VertexBuffer.h"
-#include "../Renderer/Resources/VertexArray.h"
-#include "../Editor/Editor.h"
-#include "../Scene/Scene.h"
-#include "../Renderer/Resources/Shader.h"
-#include "../Renderer/Resources/Texture.h"
-#include "../Renderer/Resources/Material.h"
-#include "../Renderer/Resources/Mesh.h"
-#include "../Renderer/Camera.h"
-#include "../Renderer/Transform.h"
-#include "../Renderer/RenderQueue.h"
 
 Application::Application()
 {
@@ -34,9 +16,69 @@ Application::~Application()
     glfwTerminate();
 }
 
+void Application::ProcessCameraInput(Window& window, Camera& camera, float deltaTime)
+{
+    float cameraSpeed = 2.5f;
+
+    if (glfwGetKey(window.GetNativeWindow(), GLFW_KEY_W) == GLFW_PRESS)
+    {
+        camera.MoveForward(cameraSpeed * deltaTime);
+    }
+
+    if (glfwGetKey(window.GetNativeWindow(), GLFW_KEY_S) == GLFW_PRESS)
+    {
+        camera.MoveForward(-cameraSpeed * deltaTime);
+    }
+
+    if (glfwGetKey(window.GetNativeWindow(), GLFW_KEY_D) == GLFW_PRESS)
+    {
+        camera.MoveRight(cameraSpeed * deltaTime);
+    }
+
+    if (glfwGetKey(window.GetNativeWindow(), GLFW_KEY_A) == GLFW_PRESS)
+    {
+        camera.MoveRight(-cameraSpeed * deltaTime);
+    }
+}
+
+void Application::MouseCallBack( // // 通过 GLFW 窗口的 UserPointer 将 Camera 对象绑定到鼠标回调，从而在回调中获取 Camera 并处理鼠标视角。
+    GLFWwindow* glfwWindow,
+    double xPos,
+    double yPos
+)
+{
+    Camera* camera =
+        static_cast<Camera*>(
+            glfwGetWindowUserPointer(glfwWindow)
+        );
+
+    if (camera)
+    {
+        camera->ProcessMouseMovement(
+            static_cast<float>(xPos),
+            static_cast<float>(yPos)
+        );
+    }
+} 
+
+void Application::ProcessInput(Window& window) {
+    if(glfwGetKey(window.GetNativeWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        window.SetShouldClose(true);
+
+    }
+}
+
 void Application::Run()
 {   
     Window window;
+    glfwSetCursorPosCallback(window.GetNativeWindow(), MouseCallBack);
+    glfwSetInputMode(
+        window.GetNativeWindow(),
+        GLFW_CURSOR,
+        GLFW_CURSOR_DISABLED
+    );
+
 
     Renderer renderer;
 
@@ -63,7 +105,15 @@ void Application::Run()
         720.0f,
         45.0f,
         0.1f,
-        100.0f
+        100.0f,
+        glm::vec3(0.0f, 0.0f, 3.0f),
+        glm::vec3(0.0f, 0.0f, -1.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f)
+    );
+
+    glfwSetWindowUserPointer(
+        window.GetNativeWindow(),
+        &camera
     );
 
     Shader shader(
@@ -160,10 +210,23 @@ void Application::Run()
         glm::cos(glm::radians(33.5f))
     );
 
+    float lastFrame = 0.0f;
+
     while(!window.ShouldClose()) 
     {
         window.PollEvents();
-        
+        ProcessInput(window);
+
+        float currentFrame = glfwGetTime();
+        float deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        ProcessCameraInput(
+            window,
+            camera,
+            deltaTime
+        );
+                
         queue.Clear();
 
         queue.Submit(mesh, transform2);
