@@ -33,6 +33,16 @@ void Renderer::Draw(const RenderItem& renderItem, Camera& camera, Light& light)
     material.SetMat4("u_Model", renderItem.m_Transform->GetMatrix());
     material.SetMat4("u_View", camera.GetViewMatrix());
     material.SetMat4("u_Projection", camera.GetProjectionMatrix());
+    material.SetMat4("u_LightSpaceMatrix", m_LightSpaceMatrix);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(
+        GL_TEXTURE_2D,
+        m_ShadowMap
+    );
+    material.SetInt(
+        "u_ShadowMap",
+        2
+    );
     if (light.GetType() == LightType::Directional)
     {
         material.SetInt("u_LightType", 0);
@@ -241,4 +251,14 @@ void Renderer::SetFrontFace(unsigned int mode)
 void Renderer::SetCullFace(unsigned int mode)
 {
     glCullFace(mode);
+}
+
+void Renderer::SetLightSpaceMatrix(const glm::mat4& lightSpaceMatrix)
+{
+    m_LightSpaceMatrix = lightSpaceMatrix;
+}
+
+void Renderer::SetShadowMap(unsigned int texture)
+{
+    m_ShadowMap = texture;
 }

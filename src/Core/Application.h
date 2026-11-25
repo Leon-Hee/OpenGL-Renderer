@@ -17,6 +17,8 @@
 #include "../Renderer/Camera.h"
 #include "../Renderer/Transform.h"
 #include "../Renderer/RenderQueue.h"
+#include "../Renderer/ShadowMap.h"
+#include "../Renderer/ShadowPass.h"
 
 class Application
 {

@@ -116,3 +116,24 @@ void Camera::ProcessMouseMovement(float xPos, float yPos)
 
     UpdateMatrix();
 }
+
+const glm::vec3& Camera::GetFront() const
+{
+    return m_Front;
+}
+const glm::vec3& Camera::GetUp() const
+{
+    return m_Up;
+}
+
+void Camera::SetFront(const glm::vec3& front)
+{
+    m_Front = glm::normalize(front);
+    UpdateMatrix();
+}
+
+void Camera::SetPosition(const glm::vec3& position)
+{
+    m_Position = position;
+    UpdateMatrix();
+}

@@ -121,6 +121,11 @@ void Application::Run()
         "../assets/shaders/basic.frag"
     );
 
+    Shader shadowDepthShader(
+        "../assets/shaders/shadow_depth.vert",
+        "../assets/shaders/shadow_depth.frag"
+    );
+
     Texture diffuseTexture(
         "../assets/textures/WallDiffuse.png"
     );
@@ -160,6 +165,8 @@ void Application::Run()
         0.5f,  0.5f,        1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f
     };
 
+
+
     unsigned int indices[] = {
 
         0, 1, 2,
@@ -169,6 +176,7 @@ void Application::Run()
     };
 
     VertexBufferLayout vertexBufferLayout;
+    
 
     vertexBufferLayout.PushFloat(2);
     vertexBufferLayout.PushFloat(2);
@@ -199,7 +207,7 @@ void Application::Run()
     
     Light light(
         LightType::Spot, 
-        glm::vec3(0.2f, 0.2f, 1.0f), 
+        glm::vec3(1.0f, 1.0f, 1.0f),
         glm::vec3(0.0f, 0.0f, -1.0f), 
         glm::vec3(1.0f), 
         1.0f, 
@@ -207,11 +215,29 @@ void Application::Run()
         0.09f, 
         0.032f,
         glm::cos(glm::radians(12.5f)),
-        glm::cos(glm::radians(33.5f))
+        glm::cos(glm::radians(16.5f))
+    );
+
+    Camera lightCamera(
+        2048.0f,
+        2048.0f,
+        33.0f,
+        0.1f,
+        100.0f,
+        light.GetPosition(),
+        light.GetDirection(),
+        glm::vec3(0.0f, 1.0f, 0.0f)
     );
 
     float lastFrame = 0.0f;
 
+
+    ShadowMap shadowMap(2048, 2048);
+
+    ShadowPass shadowPass(shadowMap, shadowDepthShader);
+
+
+ 
     while(!window.ShouldClose()) 
     {
         window.PollEvents();
@@ -226,14 +252,24 @@ void Application::Run()
             camera,
             deltaTime
         );
+
+        lightCamera.SetPosition(light.GetPosition());
+        lightCamera.SetFront(light.GetDirection());
+        glm::mat4 lightSpaceMatrix = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
+        renderer.SetLightSpaceMatrix(lightSpaceMatrix);
+        renderer.SetShadowMap(shadowMap.GetDepthTexture());
+
                 
         queue.Clear();
 
         queue.Submit(mesh, transform2);
         queue.Submit(mesh, transform);
 
+        // shadow pass
+        shadowPass.Render(queue, lightSpaceMatrix);
 
 
+        // main pass
         window.GetFrameBufferSize(
             framebufferwidth,
             framebufferheight

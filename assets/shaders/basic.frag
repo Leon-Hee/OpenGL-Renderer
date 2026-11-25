@@ -4,6 +4,7 @@ in vec2 TexCoords;
 in vec3 Normal;
 in vec3 Tangent;
 in vec3 WorldPosition;
+in vec4 v_LightSpacePosition;
 
 out vec4 FragColor;
 
@@ -20,9 +21,37 @@ uniform vec3 u_LightColor;
 
 uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_NormalTexture;
+uniform sampler2D u_ShadowMap;
 
 void main()
 {
+    vec3 shadowCoords =
+        v_LightSpacePosition.xyz /
+        v_LightSpacePosition.w;
+
+    shadowCoords =
+        shadowCoords * 0.5 + 0.5;
+
+    float shadowDepth =
+        texture(
+            u_ShadowMap,
+            shadowCoords.xy
+        ).r;
+
+
+
+    float currentDepth =
+        shadowCoords.z;
+
+    float bias = 0.005;
+
+    float shadow = 0.0;
+
+    if (currentDepth > shadowDepth + bias)
+    {
+        shadow = 1.0;
+    }
+
     // 1. 从 Normal Map 采样 Tangent-space Normal
     vec3 tangentNormal =
         texture(u_NormalTexture, TexCoords).rgb;
@@ -159,6 +188,5 @@ void main()
     color *= u_Intensity;
     color *= u_LightColor;
 
-    FragColor =
-        vec4(color, 1.0);
+    FragColor = vec4(vec3(1.0 - shadow), 1.0);
 }

@@ -10,7 +10,8 @@
 class Renderer
 {
 private:
-    
+    glm::mat4 m_LightSpaceMatrix;
+    unsigned int m_ShadowMap = 0;
 public:
     void Init(); // 初始化Renderer的属性，如深度检测
     void BeginFrame(); // 帧开始
@@ -30,6 +31,8 @@ public:
     void SetFaceCulling(bool enabled);
     void SetFrontFace(unsigned int mode);
     void SetCullFace(unsigned int mode);
+    void SetLightSpaceMatrix(const glm::mat4& lightSpaceMatrix);
+    void SetShadowMap(unsigned int texture);
 };
 
 

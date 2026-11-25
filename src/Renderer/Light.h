@@ -21,7 +21,7 @@ private:
     float m_InnerCutOff;
     float m_OuterCutOff;
 public:
-    Light(
+    Light( // 种类，位置，方向，颜色，强度，常数项，一次项，二次项，内圆锥，外圆锥
         LightType type, 
         const glm::vec3& position, 
         const glm::vec3& direction, 

@@ -42,11 +42,16 @@ public:
     const glm::mat4& GetViewMatrix() const;
     const glm::mat4& GetProjectionMatrix() const;
     const glm::vec3& GetPosition() const;
+    const glm::vec3& GetFront() const;
+    const glm::vec3& GetUp() const;
 
     void MoveForward(float distance);
     void MoveRight(float distance);
     void UpdateMatrix();
     void ProcessMouseMovement(float xPos, float yPos);
+    void SetPosition(const glm::vec3& position);
+    void SetFront(const glm::vec3& front);
+    
 };
 
 

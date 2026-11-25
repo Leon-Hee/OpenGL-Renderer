@@ -8,11 +8,14 @@ layout (location = 3) in vec3 a_Tangent;
 uniform mat4 u_View;
 uniform mat4 u_Projection;
 uniform mat4 u_Model;
+uniform mat4 u_LightSpaceMatrix;
+out vec4 v_LightSpacePosition;
 
 out vec2 TexCoords;
 out vec3 Normal;
 out vec3 Tangent;
 out vec3 WorldPosition;
+
 
 void main()
 {
@@ -36,4 +39,9 @@ void main()
 
     WorldPosition =
         vec3(u_Model * vec4(a_Position, 0.0, 1.0));
+
+    v_LightSpacePosition =
+        u_LightSpaceMatrix *
+        u_Model *
+        vec4(a_Position, 0.0, 1.0);
 }

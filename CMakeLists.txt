@@ -40,6 +40,8 @@ add_executable(
     src/Renderer/RenderQueue.h
     src/Renderer/RenderQueue.cpp
     src/Renderer/Light.cpp
+    src/Renderer/ShadowMap.cpp
+    src/Renderer/ShadowPass.cpp
     
     
 )
