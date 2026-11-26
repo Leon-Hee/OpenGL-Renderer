@@ -236,6 +236,8 @@ void Application::Run()
 
     ShadowPass shadowPass(shadowMap, shadowDepthShader);
 
+    MainPass mainPass(renderer);
+
 
  
     while(!window.ShouldClose()) 
@@ -256,8 +258,16 @@ void Application::Run()
         lightCamera.SetPosition(light.GetPosition());
         lightCamera.SetFront(light.GetDirection());
         glm::mat4 lightSpaceMatrix = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
-        renderer.SetLightSpaceMatrix(lightSpaceMatrix);
-        renderer.SetShadowMap(shadowMap.GetDepthTexture());
+        const glm::mat4 view = camera.GetViewMatrix();
+        const glm::mat4 projection = camera.GetProjectionMatrix();
+        
+        DrawContext context{
+            view,
+            projection,
+            lightSpaceMatrix, 
+            shadowMap.GetDepthTexture(),
+            light
+        };
 
                 
         queue.Clear();
@@ -288,7 +298,7 @@ void Application::Run()
 
         renderer.SetWireFrame(false);
 
-        renderer.Execute(queue, camera, light);
+        mainPass.Render(queue, camera, context);
 
         editor.Draw();
 

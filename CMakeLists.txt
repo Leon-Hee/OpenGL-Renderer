@@ -42,6 +42,8 @@ add_executable(
     src/Renderer/Light.cpp
     src/Renderer/ShadowMap.cpp
     src/Renderer/ShadowPass.cpp
+    src/Renderer/MainPass.cpp
+    src/Renderer/DrawContext.h
     
     
 )

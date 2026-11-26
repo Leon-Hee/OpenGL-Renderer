@@ -19,6 +19,7 @@
 #include "../Renderer/RenderQueue.h"
 #include "../Renderer/ShadowMap.h"
 #include "../Renderer/ShadowPass.h"
+#include "../Renderer/MainPass.h"
 
 class Application
 {

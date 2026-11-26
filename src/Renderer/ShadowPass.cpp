@@ -19,7 +19,7 @@ void ShadowPass::Render(const RenderQueue& queue, const glm::mat4& lightSpaceMat
     glClear(GL_DEPTH_BUFFER_BIT);
     m_ShadowDepthShader.Bind();
     m_ShadowDepthShader.SetMat4("u_LightSpaceMatrix", lightSpaceMatrix);
-    for(const RenderItem& item: queue.GetOpaqueItems()) {
+    for(const RenderItem& item : queue.GetOpaqueItems()) {
         m_ShadowDepthShader.SetMat4("u_Model", item.m_Transform->GetMatrix());
         item.m_Mesh->Draw();
     }
