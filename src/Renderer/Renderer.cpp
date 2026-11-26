@@ -3,7 +3,7 @@
 
 void Renderer::BeginFrame() 
 {
-    Clear();
+
 }
 
 void Renderer::Clear()
@@ -18,11 +18,15 @@ void Renderer::EndFrame()
 
 void Renderer::Init()
 {
+    SetDepthTest(true);
     SetDepthTestFunc(GL_LESS);
-    glEnable(GL_DEPTH_TEST); // 开启深度检测
+    SetDepthWrite(true);
+    SetBlend(false);
+    SetWireFrame(false);
     SetFaceCulling(true);
     SetFrontFace(GL_CCW);
-    glCullFace(GL_BACK);
+    SetCullFace(GL_BACK);
+    
 }
 
 void Renderer::Draw(const RenderItem& renderItem, const DrawContext& context)
@@ -174,11 +178,11 @@ void Renderer::SetBlend(bool enabled)
     }
 }
 
-void Renderer::SetBlendFunc()
+void Renderer::SetBlendFunc(unsigned int source, unsigned int destination)
 {
     glBlendFunc(
-        GL_SRC_ALPHA,
-        GL_ONE_MINUS_SRC_ALPHA
+        source,
+        destination
     );
 }
 
@@ -207,7 +211,7 @@ void Renderer::SetRenderType(RenderType type)
         SetDepthTest(true);
         SetDepthWrite(false);
         SetBlend(true);
-        SetBlendFunc();
+        SetBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 }
 

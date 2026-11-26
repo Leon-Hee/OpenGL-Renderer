@@ -11,7 +11,7 @@
 class Renderer
 {
 private:
-
+    void SetRenderType(RenderType type);
 public:
     void Init(); // 初始化Renderer的属性，如深度检测
     void BeginFrame(); // 帧开始
@@ -23,9 +23,9 @@ public:
     void SetWireFrame(bool enabled);
     void SetDepthTest(bool enabled);
     void SetBlend(bool enabled);
-    void SetBlendFunc();
+    void SetBlendFunc(unsigned int source, unsigned int destination);
     void SetDepthWrite(bool enabled);
-    void SetRenderType(RenderType type);
+
     void SetDepthTestFunc(unsigned int function);
     void SetFaceCulling(bool enabled);
     void SetFrontFace(unsigned int mode);

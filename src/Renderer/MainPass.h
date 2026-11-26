@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "DrawContext.h"
+#include <iostream>
 
 class MainPass
 {

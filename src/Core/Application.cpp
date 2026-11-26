@@ -133,11 +133,23 @@ void Application::Run()
         "../assets/textures/WallNormal.png"
     );
 
+    Texture woodTexture(
+        "../assets/textures/Wood.png"
+    );
+
     Material material(
         shader,
         diffuseTexture,
         normalTexture
     );
+
+    Material floorMaterial(
+        shader,
+        woodTexture,
+        normalTexture
+    );
+
+    floorMaterial.SetRenderType(RenderType::Opaque);
 
     
 
@@ -156,29 +168,64 @@ void Application::Run()
         glm::vec3(1.0f, 1.0f, 1.0f)
     );
 
+    
+    Transform floorTransform(
+        glm::vec3(0.0f, -0.5f, 0.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f)
+    );
+
     float vertices[] = {
 
-        // Position          UV          Normal          Tangent
-        -0.5f, -0.5f,        0.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f,        1.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
-        -0.5f,  0.5f,        0.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
-        0.5f,  0.5f,        1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f
+        // Position              UV          Normal          Tangent
+        -0.5f, -0.5f, 0.0f,      0.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.0f,      1.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, 0.0f,      0.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f,
+        0.5f,  0.5f, 0.0f,      1.0f, 1.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f
     };
+    float floorVertices[] = {
 
+        // Position          UV          Normal          Tangent
+
+        -5.0f, 0.0f, -5.0f,  0.0f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+
+        5.0f, 0.0f, -5.0f,  5.0f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+
+        -5.0f, 0.0f,  5.0f,  0.0f, 5.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+
+        5.0f, 0.0f,  5.0f,  5.0f, 5.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, 0.0f
+    };
 
 
     unsigned int indices[] = {
-
         0, 1, 2,
-
         1, 3, 2
-
     };
+
+    unsigned int floorIndices[] = {
+        0, 2, 1,
+        1, 2, 3
+    };
+    VertexBufferLayout floorLayout;
+
+    floorLayout.PushFloat(3);
+    floorLayout.PushFloat(2);
+    floorLayout.PushFloat(3);
+    floorLayout.PushFloat(3);
+
+    Mesh floorMesh(
+        floorVertices,
+        sizeof(floorVertices),
+        floorMaterial,
+        floorLayout,
+        floorIndices,
+        sizeof(floorIndices)
+    );
 
     VertexBufferLayout vertexBufferLayout;
     
 
-    vertexBufferLayout.PushFloat(2);
+    vertexBufferLayout.PushFloat(3);
     vertexBufferLayout.PushFloat(2);
     vertexBufferLayout.PushFloat(3);
     vertexBufferLayout.PushFloat(3);
@@ -207,15 +254,15 @@ void Application::Run()
     
     Light light(
         LightType::Spot, 
-        glm::vec3(1.0f, 1.0f, 1.0f),
-        glm::vec3(0.0f, 0.0f, -1.0f), 
+        glm::vec3(1.5f, 1.5f, 1.5f),
+        glm::vec3(-1.0f, -1.0f, -1.0f), 
         glm::vec3(1.0f), 
         1.0f, 
         1.0f, 
         0.09f, 
         0.032f,
-        glm::cos(glm::radians(12.5f)),
-        glm::cos(glm::radians(16.5f))
+        glm::cos(glm::radians(22.5f)),
+        glm::cos(glm::radians(25.5f))
     );
 
     Camera lightCamera(
@@ -274,6 +321,8 @@ void Application::Run()
 
         queue.Submit(mesh, transform2);
         queue.Submit(mesh, transform);
+        queue.Submit(floorMesh, floorTransform);
+
 
         // shadow pass
         shadowPass.Render(queue, lightSpaceMatrix);
@@ -295,6 +344,8 @@ void Application::Run()
         editor.BeginFrame(); 
 
         renderer.BeginFrame();
+
+        renderer.Clear();
 
         renderer.SetWireFrame(false);
 

@@ -47,9 +47,48 @@ void main()
 
     float shadow = 0.0;
 
-    if (currentDepth > shadowDepth + bias)
+    if (
+
+        shadowCoords.x >= 0.0 &&
+
+        shadowCoords.x <= 1.0 &&
+
+        shadowCoords.y >= 0.0 &&
+
+        shadowCoords.y <= 1.0 &&
+
+        shadowCoords.z >= 0.0 &&
+
+        shadowCoords.z <= 1.0
+
+    )
+
     {
-        shadow = 1.0;
+
+        float shadowDepth =
+
+            texture(
+
+                u_ShadowMap,
+
+                shadowCoords.xy
+
+            ).r;
+
+        float currentDepth =
+
+            shadowCoords.z;
+
+        float bias = 0.0001;
+
+        if (currentDepth > shadowDepth + bias)
+
+        {
+
+            shadow = 1.0;
+
+        }
+
     }
 
     // 1. 从 Normal Map 采样 Tangent-space Normal
@@ -181,6 +220,7 @@ void main()
             TexCoords
         ).rgb;
 
+    
     // 11. Lighting
     color *= diffuse;
     color *= attenuation;
@@ -188,5 +228,10 @@ void main()
     color *= u_Intensity;
     color *= u_LightColor;
 
-    FragColor = vec4(vec3(1.0 - shadow), 1.0);
+    // 12. Shadow
+
+    color *= (1.0 - shadow);
+    
+    FragColor = vec4(color, 1.0);
+    
 }
