@@ -25,106 +25,106 @@ void Renderer::Init()
     glCullFace(GL_BACK);
 }
 
-void Renderer::Draw(const RenderItem& renderItem, Camera& camera, Light& light)
+void Renderer::Draw(const RenderItem& renderItem, const DrawContext& context)
 {
     Material& material = renderItem.m_Mesh->GetMaterial();
     material.Bind();
     SetRenderType(material.GetRenderType());
     material.SetMat4("u_Model", renderItem.m_Transform->GetMatrix());
-    material.SetMat4("u_View", camera.GetViewMatrix());
-    material.SetMat4("u_Projection", camera.GetProjectionMatrix());
-    material.SetMat4("u_LightSpaceMatrix", m_LightSpaceMatrix);
+    material.SetMat4("u_View", context.view);
+    material.SetMat4("u_Projection", context.projection);
+    material.SetMat4("u_LightSpaceMatrix", context.lightSpaceMatrix);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(
         GL_TEXTURE_2D,
-        m_ShadowMap
+        context.shadowMap
     );
     material.SetInt(
         "u_ShadowMap",
         2
     );
-    if (light.GetType() == LightType::Directional)
+    if (context.light.GetType() == LightType::Directional)
     {
         material.SetInt("u_LightType", 0);
         material.SetVec3(
             "u_LightDirection",
-            light.GetDirection()
+            context.light.GetDirection()
         );
     }
 
-    else if (light.GetType() == LightType::Point)
+    else if (context.light.GetType() == LightType::Point)
     {
         material.SetInt("u_LightType", 1);
         material.SetVec3(
             "u_LightPosition",
-            light.GetPosition()
+            context.light.GetPosition()
         );
         material.SetFloat(
             "u_LightConstant",
-            light.GetConstant()
+            context.light.GetConstant()
         );
 
         material.SetFloat(
             "u_LightLinear",
-            light.GetLinear()
+            context.light.GetLinear()
         );
 
         material.SetFloat(
             "u_LightQuadratic",
-            light.GetQuadratic()
+            context.light.GetQuadratic()
         );
 
         material.SetVec3(
             "u_LightColor",
-            light.GetColor()
+            context.light.GetColor()
         );
     }
 
-    else if (light.GetType() == LightType::Spot)
+    else if (context.light.GetType() == LightType::Spot)
     {
         material.SetInt("u_LightType", 2);
 
         material.SetVec3(
             "u_LightPosition",
-            light.GetPosition()
+            context.light.GetPosition()
         );
 
         material.SetVec3(
             "u_LightDirection",
-            light.GetDirection()
+            context.light.GetDirection()
         );
 
         material.SetFloat(
             "u_LightConstant",
-            light.GetConstant()
+            context.light.GetConstant()
         );
 
         material.SetFloat(
             "u_LightLinear",
-            light.GetLinear()
+            context.light.GetLinear()
         );
 
         material.SetFloat(
             "u_LightQuadratic",
-            light.GetQuadratic()
+            context.light.GetQuadratic()
         );
 
         material.SetFloat(
             "u_LightInnerCutoff",
-            light.GetInnerCutoff()
+            context.light.GetInnerCutoff()
         );
 
         material.SetFloat(
             "u_LightOuterCutoff",
-            light.GetOuterCutoff()
+            context.light.GetOuterCutoff()
         );
 
         material.SetVec3(
             "u_LightColor",
-            light.GetColor()
+            context.light.GetColor()
         );
     }
-    material.SetFloat("u_Intensity", light.GetIntensity());
+    material.SetFloat("u_Intensity", context.light.GetIntensity());
     renderItem.m_Mesh->Draw();
 }
 
@@ -211,20 +211,7 @@ void Renderer::SetRenderType(RenderType type)
     }
 }
 
-void Renderer::Execute(RenderQueue& queue, Camera& camera, Light& light) 
-{
-    const std::vector<RenderItem>& renderOpaqueItems = queue.GetOpaqueItems();
-    
-    for(const auto& item : renderOpaqueItems) {
-        Draw(item, camera, light);
-    }
-    queue.SortTransparent(camera);
-    const std::vector<RenderItem>& renderTransparentItems = queue.GetTransparentItems();
-    
-    for(const auto& item : renderTransparentItems) {
-        Draw(item, camera, light);
-    }
-}
+
 
 void Renderer::SetDepthTestFunc(unsigned int function)
 {
@@ -251,14 +238,4 @@ void Renderer::SetFrontFace(unsigned int mode)
 void Renderer::SetCullFace(unsigned int mode)
 {
     glCullFace(mode);
-}
-
-void Renderer::SetLightSpaceMatrix(const glm::mat4& lightSpaceMatrix)
-{
-    m_LightSpaceMatrix = lightSpaceMatrix;
-}
-
-void Renderer::SetShadowMap(unsigned int texture)
-{
-    m_ShadowMap = texture;
 }
