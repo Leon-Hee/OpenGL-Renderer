@@ -37,13 +37,14 @@ add_executable(
     src/Renderer/Transform.cpp
     src/Renderer/Resources/IndexBuffer.cpp
     src/Renderer/RenderType.h
-    src/Renderer/RenderQueue.h
     src/Renderer/RenderQueue.cpp
     src/Renderer/Light.cpp
     src/Renderer/ShadowMap.cpp
     src/Renderer/ShadowPass.cpp
     src/Renderer/MainPass.cpp
     src/Renderer/DrawContext.h
+    src/Renderer/Framebuffer.cpp
+    src/Renderer/ScreenQuad.cpp
     
     
 )

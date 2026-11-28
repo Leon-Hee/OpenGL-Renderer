@@ -1,5 +1,8 @@
 #include "Application.h"
 
+Framebuffer* Application::s_Framebuffer = nullptr;
+Camera* Application::s_Camera = nullptr;
+
 Application::Application()
 {
     if(!glfwInit()) {
@@ -69,6 +72,60 @@ void Application::ProcessInput(Window& window) {
     }
 }
 
+void Application::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+    if (width == 0 || height == 0)
+    {
+        
+    }
+        return;
+
+    std::cout
+
+        << "Framebuffer Resize: "
+
+        << width
+
+        << " x "
+
+        << height
+
+        << std::endl;
+
+    glViewport(
+        0,
+        0,
+        width,
+        height
+    );
+
+    if (s_Framebuffer)
+    {
+        s_Framebuffer->Resize(
+            width,
+            height
+        );
+    }
+
+    if (s_Camera)
+    {
+        s_Camera->SetViewportSize(
+            static_cast<float>(width),
+            static_cast<float>(height)
+        );
+    }
+}
+
+void Application::SetFramebuffer(Framebuffer* framebuffer)
+{
+    s_Framebuffer = framebuffer;
+}
+
+void Application::SetCamera(Camera* camera)
+{
+    s_Camera = camera;
+}
+
 void Application::Run()
 {   
     Window window;
@@ -100,12 +157,20 @@ void Application::Run()
               << glGetString(GL_RENDERER)
               << std::endl;
 
+    int framebufferWidth = 0;
+    int framebufferHeight = 0;
+
+    window.GetFrameBufferSize(
+        framebufferWidth,
+        framebufferHeight
+    );
+
     Camera camera(
-        1280.0f,
-        720.0f,
+        static_cast<float>(framebufferWidth),
+        static_cast<float>(framebufferHeight),
         45.0f,
-        0.1f,
-        100.0f,
+        1.0f,
+        200.0f,
         glm::vec3(0.0f, 0.0f, 3.0f),
         glm::vec3(0.0f, 0.0f, -1.0f),
         glm::vec3(0.0f, 1.0f, 0.0f)
@@ -124,6 +189,11 @@ void Application::Run()
     Shader shadowDepthShader(
         "../assets/shaders/shadow_depth.vert",
         "../assets/shaders/shadow_depth.frag"
+    );
+
+    Shader screenShader(
+        "../assets/shaders/ScreenQuad.vert",
+        "../assets/shaders/ScreenQuad.frag"
     );
 
     Texture diffuseTexture(
@@ -239,8 +309,7 @@ void Application::Run()
         sizeof(indices)
     );
 
-    int framebufferwidth = 0;
-    int framebufferheight = 0;
+    
 
     renderer.SetClearColor(
         0.0f,
@@ -269,7 +338,7 @@ void Application::Run()
         2048.0f,
         2048.0f,
         33.0f,
-        0.1f,
+        1.0f,
         100.0f,
         light.GetPosition(),
         light.GetDirection(),
@@ -285,7 +354,18 @@ void Application::Run()
 
     MainPass mainPass(renderer);
 
+    
+    Framebuffer frameBuffer(framebufferWidth, framebufferHeight);
 
+    SetFramebuffer(&frameBuffer);
+    SetCamera(&camera);
+
+    glfwSetFramebufferSizeCallback(
+        window.GetNativeWindow(),
+        FramebufferSizeCallback
+    );
+
+    ScreenQuad screenQuad;
  
     while(!window.ShouldClose()) 
     {
@@ -327,18 +407,16 @@ void Application::Run()
         // shadow pass
         shadowPass.Render(queue, lightSpaceMatrix);
 
+        frameBuffer.Bind();
+
 
         // main pass
-        window.GetFrameBufferSize(
-            framebufferwidth,
-            framebufferheight
-        );
 
         renderer.SetViewPort(
             0,
             0,
-            framebufferwidth,
-            framebufferheight
+            frameBuffer.GetWidth(),
+            frameBuffer.GetHeight()
         );
 
         editor.BeginFrame(); 
@@ -350,6 +428,25 @@ void Application::Run()
         renderer.SetWireFrame(false);
 
         mainPass.Render(queue, camera, context);
+
+        frameBuffer.Unbind();
+
+        
+        glDisable(GL_DEPTH_TEST);
+
+        
+        screenShader.Bind();
+
+        screenShader.SetInt("screenTexture", 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, frameBuffer.GetColorAttachment());
+
+        screenQuad.Draw();
+
+        glEnable(GL_DEPTH_TEST);
+        
+        
 
         editor.Draw();
 

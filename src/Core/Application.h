@@ -20,11 +20,15 @@
 #include "../Renderer/ShadowMap.h"
 #include "../Renderer/ShadowPass.h"
 #include "../Renderer/MainPass.h"
+#include "../Renderer/Framebuffer.h"
+#include "../Renderer/ScreenQuad.h"
 
 class Application
 {
 private:
-    
+    static Framebuffer* s_Framebuffer;
+
+    static Camera* s_Camera;
 public:
     Application();
     ~Application();
@@ -33,6 +37,15 @@ public:
     void ProcessCameraInput(Window& window, Camera& camera, float deltaTime);
     static void MouseCallBack(GLFWwindow* glfwWindow, double xPos, double yPos);
     void ProcessInput(Window& window);
+
+    static void SetFramebuffer(Framebuffer* framebuffer);
+    static void SetCamera(Camera* camera);
+
+    static void FramebufferSizeCallback(
+        GLFWwindow* window,
+        int width,
+        int height
+    );
 
 };
 

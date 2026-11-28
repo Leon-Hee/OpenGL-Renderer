@@ -51,6 +51,7 @@ public:
     void ProcessMouseMovement(float xPos, float yPos);
     void SetPosition(const glm::vec3& position);
     void SetFront(const glm::vec3& front);
+    void SetViewportSize(float width, float height);
     
 };
 

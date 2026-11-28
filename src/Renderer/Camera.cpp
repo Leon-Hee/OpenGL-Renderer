@@ -137,3 +137,20 @@ void Camera::SetPosition(const glm::vec3& position)
     m_Position = position;
     UpdateMatrix();
 }
+
+
+void Camera::SetViewportSize(float width, float height)
+{
+    if (width <= 0.0f || height <= 0.0f)
+        return;
+
+    m_Width = width;
+    m_Height = height;
+
+    m_Projection = glm::perspective(
+        glm::radians(m_FOV),
+        m_Width / m_Height,
+        m_Znear,
+        m_Zfar
+    );
+}
